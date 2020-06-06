@@ -1,9 +1,12 @@
 
 from vtk import *
 import vtk
+import nibabel as nib
+import numpy as np
 colors = vtk.vtkNamedColors()
 
-fileName = 'data\case_00000\imaging.nii.gz'
+type = 'imaging'
+fileName = r'data\case_00000\{}.nii.gz'.format(type)
 
 colors.SetColor("BkgColor", [51, 77, 102, 255])
 
@@ -34,32 +37,55 @@ volumeMapper.SetInputConnection(reader.GetOutputPort())
 # It is modality-specific, and often anatomy-specific as well.
 # The goal is to one color for flesh (between 500 and 1000)
 # and another color for bone (1150 and over).
-boneValue, boneOpacity = 700, 1
-tissueValue, tissueOpacity = 200, 0.5
+if type=='imaging':
+    boneValue, boneOpacity = 1000, 1
+    tissueValue, tissueOpacity = 500, 0.5
 
-volumeColor = vtk.vtkColorTransferFunction()
-volumeColor.AddRGBPoint(0, 0.0, 0.0, 0.0)
-volumeColor.AddRGBPoint(tissueValue, 1.0, 0.5, 0.3)
-volumeColor.AddRGBPoint(boneValue, 1.0, 1.0, 0.9)
+    volumeColor = vtk.vtkColorTransferFunction()
+    volumeColor.AddRGBPoint(0, 0.0, 0.0, 0.0)
+    volumeColor.AddRGBPoint(tissueValue, 1.0, 0.5, 0.3)
+    volumeColor.AddRGBPoint(boneValue, 1.0, 1.0, 0.9)
 
-# The opacity transfer function is used to control the opacity
-# of different tissue types.
-volumeScalarOpacity = vtk.vtkPiecewiseFunction()
-volumeScalarOpacity.AddPoint(0, 0.0)
-volumeScalarOpacity.AddPoint(100, 0.0)
-volumeScalarOpacity.AddPoint(tissueValue, tissueOpacity)
-volumeScalarOpacity.AddPoint(boneValue, boneOpacity) #bone
-volumeScalarOpacity.AddPoint(1000, 0.0)
+    # The opacity transfer function is used to control the opacity
+    # of different tissue types.
+    volumeScalarOpacity = vtk.vtkPiecewiseFunction()
+    volumeScalarOpacity.AddPoint(0, 0.0)
+    volumeScalarOpacity.AddPoint(100, 0.0)
+    volumeScalarOpacity.AddPoint(tissueValue, tissueOpacity)
+    volumeScalarOpacity.AddPoint(boneValue, boneOpacity) #bone
+    volumeScalarOpacity.AddPoint(1000, 0.0)
 
-# The gradient opacity function is used to decrease the opacity
-# in the "flat" regions of the volume while maintaining the opacity
-# at the boundaries between tissue types.  The gradient is measured
-# as the amount by which the intensity changes over unit distance.
-# For most medical data, the unit distance is 1mm.
-volumeGradientOpacity = vtk.vtkPiecewiseFunction()
-volumeGradientOpacity.AddPoint(0, 0.0)
-volumeGradientOpacity.AddPoint(90, 0.5)
-volumeGradientOpacity.AddPoint(100, 1)
+    # The gradient opacity function is used to decrease the opacity
+    # in the "flat" regions of the volume while maintaining the opacity
+    # at the boundaries between tissue types.  The gradient is measured
+    # as the amount by which the intensity changes over unit distance.
+    # For most medical data, the unit distance is 1mm.
+    volumeGradientOpacity = vtk.vtkPiecewiseFunction()
+    volumeGradientOpacity.AddPoint(0, 0.0)
+    volumeGradientOpacity.AddPoint(90, 0.5)
+    volumeGradientOpacity.AddPoint(100, 1)
+if type=='segmentation':
+    volumeColor = vtk.vtkColorTransferFunction()
+    volumeColor.AddRGBPoint(0, 0.0, 0.0, 0.0)
+    volumeColor.AddRGBPoint(1, 0.0, 0.0, 1)
+    volumeColor.AddRGBPoint(2, 1, 0.0, 0.0)
+
+    # The opacity transfer function is used to control the opacity
+    # of different tissue types.
+    volumeScalarOpacity = vtk.vtkPiecewiseFunction()
+    volumeScalarOpacity.AddPoint(1, 1.0)
+    volumeScalarOpacity.AddPoint(2, 1.0)
+
+    # The gradient opacity function is used to decrease the opacity
+    # in the "flat" regions of the volume while maintaining the opacity
+    # at the boundaries between tissue types.  The gradient is measured
+    # as the amount by which the intensity changes over unit distance.
+    # For most medical data, the unit distance is 1mm.
+    volumeGradientOpacity = vtk.vtkPiecewiseFunction()
+    volumeGradientOpacity.AddPoint(0, 0.0)
+    volumeGradientOpacity.AddPoint(1, 0.6)
+    volumeGradientOpacity.AddPoint(2, 0.6)
+
 
 # The VolumeProperty attaches the color and opacity functions to the
 # volume, and sets other volume properties.  The interpolation should

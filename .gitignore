@@ -3,4 +3,5 @@
 data/case_*/imaging.nii.gz
 data
 visualized
+logs
 *.tmp
