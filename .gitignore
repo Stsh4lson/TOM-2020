@@ -6,4 +6,4 @@ visualized
 logs
 my_model
 *.tmp
-saved_models
+predicting.ipynb

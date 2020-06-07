@@ -6,18 +6,36 @@ import nibabel as nib
 from starter_code.visualize import visualize
 from starter_code.utils import load_case
 from tqdm import tqdm
+import os
 import tensorflow as tf
-
-volume, segmentation = load_case(123)
-X = volume.get_data()
-X = np.expand_dims(X, 3)
-model = tf.keras.models.load_model('model_big_1')
+from visualizeSlider3Way import *
 
 
-segmentation_pred = model.predict(X)
-nifty = nib.Nifti1Image(segmentation_pred, volume.affine, volume.header)
+def visualize_case(case_num, save=None):
 
-from visualizeSlider import *
-cube_show_slider(cube=segmentation_pred[:,:,:,0], axis=0, cmap='gray')
-cube_show_slider(cube=segmentation_pred[:,:,:,1], axis=0, cmap='gray')
-cube_show_slider(cube=segmentation.get_data(), axis=0, cmap='gray')
+    volume, segmentation = load_case(case_num)
+    X = volume.get_fdata()
+    y = segmentation.get_fdata()
+    X = np.expand_dims(X, 3)
+    model = tf.keras.models.load_model('saved_models\model_big_3')
+
+    print(X.shape)
+    print(y.shape)
+
+    segmentation_pred = model.predict(X)
+    (T, segmentation_pred_cancer) = cv2.threshold(
+        segmentation_pred[:, :, :, 2], 0.004, 2, cv2.THRESH_BINARY)
+    (T, segmentation_pred_kidney) = cv2.threshold(
+        segmentation_pred[:, :, :, 1], 0.2, 1, cv2.THRESH_BINARY)
+    segmentation_pred = np.clip(
+        (segmentation_pred_kidney+segmentation_pred_cancer), 0, 2)
+
+    cube_show_slider(cube=X[:, :, :, 0], cube1=y,
+                     cube2=segmentation_pred_cancer, axis=0, cmap='gray')
+    if save:
+        nifty_img = nib.Nifti1Image(
+            segmentation_pred, volume.affine, volume.header)
+        nib.save(nifty_img, str(save) + "\case{}".format(case_num))
+
+
+visualize_case(123)
