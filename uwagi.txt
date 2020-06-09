@@ -1,0 +1,7 @@
+Uwagi ponizej:
+
+1) Fakt, ze dla niektorych przypadkow przekroj 2-D nie ma rozmiaru 512x512 nie jest bledem - takie przypadki nalezy odpowiednio obsluzyc (np. resampling lub padding w dataloaderze).
+2) Do ewaluacji poza Dice proponuje uzyc dodatkowo miary Hausdorfa.
+3) Jakie są wstepne wyniki?
+4) Opis sugeruje, ze dzialalo jedynie 5 przypadkow.
+5) Samo rozwiazanie opare na U-Net ewaluowanym Dicem jest jak najbardziej poprawne. Proponuje jednak sprobowac nauczyc siec korzystajac z dwoch funkcji kosztu - obecnie uzytej oraz wlasnie wspolczynnika Dice.
