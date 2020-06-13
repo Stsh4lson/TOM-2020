@@ -8,25 +8,25 @@ from starter_code.utils import load_case
 from tqdm import tqdm
 import os
 import tensorflow as tf
-from visualizeSlider3Way import *
+from modules.visualizeSlider3Way import cube_show_slider
+from modules.preprocessing import preprocess_X
 
 
 def visualize_case(case_num, save=None):
 
     volume, segmentation = load_case(case_num)
-    X = volume.get_fdata()
+    X = preprocess_X(volume)
     y = segmentation.get_fdata()
-    X = np.expand_dims(X, 3)
-    model = tf.keras.models.load_model('saved_models\model_big_3')
+    model = tf.keras.models.load_model('saved_models\model_big_4_test')
 
     print(X.shape)
     print(y.shape)
 
     segmentation_pred = model.predict(X)
     (T, segmentation_pred_cancer) = cv2.threshold(
-        segmentation_pred[:, :, :, 2], 0.004, 2, cv2.THRESH_BINARY)
+        segmentation_pred[:, :, :, 1], 0.004, 2, cv2.THRESH_BINARY)
     (T, segmentation_pred_kidney) = cv2.threshold(
-        segmentation_pred[:, :, :, 1], 0.2, 1, cv2.THRESH_BINARY)
+        segmentation_pred[:, :, :, 0], 0.2, 1, cv2.THRESH_BINARY)
     segmentation_pred = np.clip(
         (segmentation_pred_kidney+segmentation_pred_cancer), 0, 2)
 
@@ -36,6 +36,5 @@ def visualize_case(case_num, save=None):
         nifty_img = nib.Nifti1Image(
             segmentation_pred, volume.affine, volume.header)
         nib.save(nifty_img, str(save) + "\case{}".format(case_num))
-
 
 visualize_case(123)
