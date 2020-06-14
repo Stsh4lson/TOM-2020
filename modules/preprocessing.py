@@ -27,11 +27,11 @@ def preprocess_X(volume):
             X_placeholder[i,:,:] = cv2.resize(X[i,:,:], (512, 512))
         X = np.expand_dims(X_placeholder, 3)
         # window kidney
-        X_window = np.clip(X, 1500, 3000)
+        X_window = np.clip(X, 1500, 4096)
     else:
         X = np.expand_dims(X, 3)
         # window kidney
-        X_window = np.clip(X, 2500, 3000)
+        X_window = np.clip(X, 1500, 4096)
 
     # edge detection
     X_edges = []
@@ -50,5 +50,11 @@ def preprocess_X(volume):
 
 def preprocess_y(segmentation):
     y = segmentation.get_fdata()
+    if not y.shape[1]==512 or not y.shape[2]==512:
+        y_placeholder = np.zeros((y.shape[0], 512, 512))
+        for i in range(y.shape[0]):            
+            y_placeholder[i,:,:] = cv2.resize(y[i,:,:], (512, 512))
+        y = y_placeholder
     y = tf.keras.utils.to_categorical(y)[:,:,:,1:]
+    
     return y
