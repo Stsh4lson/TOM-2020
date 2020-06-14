@@ -7,3 +7,4 @@ logs
 my_model
 *.tmp
 predicting.ipynb
+build
