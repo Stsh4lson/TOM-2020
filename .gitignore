@@ -5,6 +5,7 @@ data
 visualized
 logs
 my_model
+build
 *.tmp
 predicting.ipynb
 build
