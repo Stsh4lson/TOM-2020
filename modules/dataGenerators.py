@@ -13,7 +13,6 @@ def trainGenerator(case_nums, batch_size):
             L = X_file.shape[0]
             batch_start = 0
             batch_end = batch_size
-            print('loaded case ', case_num)
             while batch_start < L:
                 limit = min(batch_end, L)
                 X = X_file[batch_start:limit, :, :, :]
@@ -42,7 +41,7 @@ def validationGenerator(case_nums, batch_size):
         L = X_file.shape[0]
         batch_start = 0
         batch_end = batch_size
-        print('\nloaded case {} for validation'.format(random_val_index))
+        print('validation in progress please wait')
         while batch_start < L:
             limit = min(batch_end, L)
             X = X_file[batch_start:limit, :, :, :]
