@@ -13,14 +13,14 @@ def trainGenerator(case_nums, batch_size):
             L = X_file.shape[0]
             batch_start = 0
             batch_end = batch_size
-
+            print('loaded case ', case_num)
             while batch_start < L:
                 limit = min(batch_end, L)
                 X = X_file[batch_start:limit, :, :, :]
                 y = y_file[batch_start:limit, :, :, :]
 
                 #needs to yield (X, y, [None]) for some reason
-                yield (X.astype(np.float32), y.astype(np.float32), [None])
+                yield (X.astype(np.float32), y.astype(np.float32))
 
                 batch_start += batch_size   
                 batch_end += batch_size
@@ -31,23 +31,25 @@ def trainGenerator(case_nums, batch_size):
 
 def validationGenerator(case_nums, batch_size):
     #generates random index from given dataset (validation data is given)
-    random_val_index = case_nums[np.random.randint(0, len(case_nums))]
-    volume, segmentation = load_case(random_val_index)
-    #preprocessing input
-    X_file = preprocess_X(volume)
-    y_file = preprocess_y(segmentation)
+    while True:
+        random_val_index = case_nums[np.random.randint(0, len(case_nums))]
 
-    L = X_file.shape[0]
-    batch_start = 0
-    batch_end = batch_size
+        volume, segmentation = load_case(random_val_index)
+        #preprocessing input
+        X_file = preprocess_X(volume)
+        y_file = preprocess_y(segmentation)
 
-    while batch_start < L:
-        limit = min(batch_end, L)
-        X = X_file[batch_start:limit, :, :, :]
-        y = y_file[batch_start:limit, :, :, :]
+        L = X_file.shape[0]
+        batch_start = 0
+        batch_end = batch_size
+        print('\nloaded case {} for validation'.format(random_val_index))
+        while batch_start < L:
+            limit = min(batch_end, L)
+            X = X_file[batch_start:limit, :, :, :]
+            y = y_file[batch_start:limit, :, :, :]
 
-        #needs to yield (X, y, [None]) for some reason
-        yield (X.astype(np.float32), y.astype(np.float32), [None])
+            #needs to yield (X, y, [None]) for some reason
+            yield (X.astype(np.float32), y.astype(np.float32))
 
-        batch_start += batch_size   
-        batch_end += batch_size
+            batch_start += batch_size   
+            batch_end += batch_size

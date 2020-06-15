@@ -19,7 +19,7 @@ def auto_canny(image, sigma=0.1):
 def preprocess_X(volume):
     #load as array
     X = volume.get_fdata()
-    X = scale(X, 4096)
+    X = scale(X)
     #dealling with case 160
     if not X.shape[1]==512 or not X.shape[2]==512:
         X_placeholder = np.zeros((X.shape[0], 512, 512))
@@ -27,21 +27,22 @@ def preprocess_X(volume):
             X_placeholder[i,:,:] = cv2.resize(X[i,:,:], (512, 512))
         X = np.expand_dims(X_placeholder, 3)
         # window kidney
-        X_window = np.clip(X, 1500, 4096)
+        X_window = np.clip(X, 0.366, 1)
     else:
         X = np.expand_dims(X, 3)
         # window kidney
-        X_window = np.clip(X, 1500, 4096)
+        X_window = np.clip(X, 0.366, 1)
 
     # edge detection
     X_edges = []
     for i in range(len(X[:,0,0,0])):
         X_edges.append( auto_canny(
             cv2.GaussianBlur(
-                scale(X_window[i,:,:,0],255), (15, 15), 0).astype(np.uint8))
+                scale(X_window[i,:,:,0], 255), (15, 15), 0).astype(np.uint8))
             )
     X_edges = np.array(X_edges)
     X_edges = cv2.morphologyEx(X_edges, cv2.MORPH_CLOSE, (10, 10))
+    X_edges = scale(X_edges, 1)
     X_edges = np.expand_dims(X_edges, 3)
 
     # concat contrast with edges
