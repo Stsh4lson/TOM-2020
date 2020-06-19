@@ -10,3 +10,6 @@ build
 predicting.ipynb
 build
 saved_models
+trash
+predict_testing.ipynb
+main.ipynb

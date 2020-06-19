@@ -1,4 +1,4 @@
-def cube_show_slider(cube, cube1, cube2, axis=2, **kwargs):
+def cube_show_slider(cube, cube1=None, cube2=None, axis=2, **kwargs):
     """
     Display a 3d ndarray with a slider to move along the third dimension.
 
