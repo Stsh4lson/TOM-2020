@@ -18,7 +18,7 @@ def visualize_case(case_num, save=None):
     volume, segmentation = load_case(case_num)
     X = preprocess_X(volume)
     y = segmentation.get_fdata()
-    model = tf.keras.models.load_model(r'saved_models\checkpoints\model8\unet_without_edge_detection_with_batch_norm_1592592855', custom_objects={
+    model = tf.keras.models.load_model(r'saved_models\checkpoints\unet_BN_with_CCC_100steps1592673121', custom_objects={
         'dice_coef_loss': dice_coef_loss, 'dice_coef': dice_coef})
     
 

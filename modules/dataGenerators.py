@@ -11,9 +11,6 @@ def trainGenerator(case_nums, batch_size):
             #preprocessing input
             X_file = preprocess_X(volume)
             y_file = preprocess_y(segmentation)
-            # X_file = volume.get_fdata()
-            # X_file = np.expand_dims(X_file, axis=3)
-            # y_file = volume.get_fdata()
             L = X_file.shape[0]
             batch_start = 0
             batch_end = batch_size
@@ -21,13 +18,11 @@ def trainGenerator(case_nums, batch_size):
                 limit = min(batch_end, L)
                 X = X_file[batch_start:limit, :, :, :]
                 y = y_file[batch_start:limit, :, :, :]
-                #needs to yield (X, y, [None]) for some reason
                 yield (X, y)            
                 batch_start += batch_size   
                 batch_end += batch_size
 
             if case_num == case_nums[-1]:
-                # breaks loop so it starts again infinietly
                 break
 
 def validationGenerator(case_nums, batch_size):
@@ -35,12 +30,8 @@ def validationGenerator(case_nums, batch_size):
     while True:
         for case_num in case_nums:
             volume, segmentation = load_case(case_num)
-            #preprocessing input
             X_file = preprocess_X(volume)
             y_file = preprocess_y(segmentation)
-            # X_file = volume.get_fdata()
-            # X_file = np.expand_dims(X_file, axis=3)
-            # y_file = volume.get_fdata()
             L = X_file.shape[0]
             batch_start = 0
             batch_end = batch_size
@@ -53,7 +44,7 @@ def validationGenerator(case_nums, batch_size):
                 y = y_file[batch_start:limit, :, :, :]
 
                 #needs to yield (X, y, [None]) for some reason
-                yield (X.astype(np.float32), y.astype(np.float32))            
+                yield (X, y)            
                 batch_start += batch_size   
                 batch_end += batch_size
 

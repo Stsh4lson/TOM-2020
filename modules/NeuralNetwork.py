@@ -91,11 +91,10 @@ def makeModel(IMG_HEIGHT, IMG_WIDTH, IMG_CHANNELS):
     c9 = tf.keras.layers.Conv2D(16, (3, 3), activation='relu', kernel_initializer='he_normal', padding='same')(c9)
     c9 = tf.keras.layers.BatchNormalization()(c9)
     
-    outputs = tf.keras.layers.Conv2D(3, (1, 1), activation='softmax')(c9)
+    outputs = tf.keras.layers.Conv2D(2, (1, 1), activation='softmax')(c9)
     model = tf.keras.Model(inputs=[inputs], outputs=[outputs])
     
     IoU_score = tf.keras.metrics.MeanIoU(3)
-    optimizer = tf.keras.optimizers.Adam()
-    model.compile(optimizer=optimizer, loss = dice_coef_loss, metrics=[dice_coef, IoU_score, 'accuracy'])
+    model.compile(optimizer='adam', loss = 'categorical_crossentropy', metrics=[dice_coef, IoU_score, 'accuracy'])
 
     return model

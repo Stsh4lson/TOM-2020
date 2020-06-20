@@ -60,6 +60,6 @@ def preprocess_y(segmentation):
         for i in range(y.shape[0]):            
             y_placeholder[i,:,:] = cv2.resize(y[i,:,:], (512, 512))
         y = y_placeholder
-    y = tf.keras.utils.to_categorical(y)
+    y = tf.keras.utils.to_categorical(y)[:,:,:,1:]
     
     return y
