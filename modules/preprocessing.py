@@ -26,7 +26,19 @@ def edge_detect(img):
             ,9)
         )
     return X_edges
-            
+
+def find_segmentation(y):
+    y_slices=len(y[:,0,0])-1
+    for slice in range(y_slices):
+        if np.sum(y[slice,:,:])>0:
+            begining_slice=slice
+            break
+    for slice in range(y_slices):
+        if np.sum(y[(y_slices-slice),:,:])>0:
+            ending_slice=y_slices-slice
+            break
+    return begining_slice, ending_slice
+
 #CURRENTLY WINDOWING AND EDGE DETECTION TURNED OFF
 def preprocess_X(volume):
     #load as array
@@ -48,11 +60,12 @@ def preprocess_X(volume):
     # X = np.concatenate((X_window, X_edges), axis=3).astype(np.float32)
     return X
 
-def preprocess_y(segmentation):
+def preprocess_y(segmentation):    
     y = segmentation.get_data()
+    begining, end = find_segmentation(y)
     # y = tf.cast(y, dtype=tf.float16)
     y = tf.keras.utils.to_categorical(y)
     if not y.shape[1] == 512 or not y.shape[2] == 512:
         y = tf.image.resize(y, size=(512, 512))
     
-    return y
+    return y, begining, end

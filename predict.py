@@ -18,7 +18,7 @@ def visualize_case(case_num, save=None):
     volume, segmentation = load_case(case_num)
     X = preprocess_X(volume)
     y = segmentation.get_fdata()
-    model = tf.keras.models.load_model(r'saved_models\model_unetwithoutBNscal2loss160epochs1592747662_from_1592748270.0002604', custom_objects={
+    model = tf.keras.models.load_model(r'saved_models\modelunetSGD1592773279_1592775821.872087.h5', custom_objects={
         'dice_coef_loss': dice_coef_loss, 'dice_coef': dice_coef})
     
 

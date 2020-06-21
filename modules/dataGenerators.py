@@ -10,7 +10,9 @@ def trainGenerator(case_nums, batch_size):
             volume, segmentation = load_case(case_num)
             #preprocessing input
             X_file = preprocess_X(volume)
-            y_file = preprocess_y(segmentation)
+            y_file, begining_num, end_num = preprocess_y(segmentation)
+            X_file = X_file[begining_num:end_num+1, :, :]
+            y_file = y_file[begining_num:end_num+1, :, :]
             L = X_file.shape[0]
             batch_start = 0
             batch_end = batch_size
@@ -18,7 +20,7 @@ def trainGenerator(case_nums, batch_size):
                 limit = min(batch_end, L)
                 X = X_file[batch_start:limit, :, :, :]
                 y = y_file[batch_start:limit, :, :, :]
-                yield (X, y)            
+                yield (X, y, [None])            
                 batch_start += batch_size   
                 batch_end += batch_size
 
@@ -31,7 +33,9 @@ def validationGenerator(case_nums, batch_size):
         for case_num in case_nums:
             volume, segmentation = load_case(case_num)
             X_file = preprocess_X(volume)
-            y_file = preprocess_y(segmentation)
+            y_file, begining_num, end_num = preprocess_y(segmentation)
+            X_file = X_file[begining_num:end_num+1, :, :]
+            y_file = y_file[begining_num:end_num+1, :, :]
             L = X_file.shape[0]
             batch_start = 0
             batch_end = batch_size
@@ -44,7 +48,7 @@ def validationGenerator(case_nums, batch_size):
                 y = y_file[batch_start:limit, :, :, :]
 
                 #needs to yield (X, y, [None]) for some reason
-                yield (X, y)            
+                yield (X, y, [None])            
                 batch_start += batch_size   
                 batch_end += batch_size
 
