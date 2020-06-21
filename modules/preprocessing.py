@@ -2,9 +2,12 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
+import tensorflow.keras.backend as K
 
-def scale(array, maxv=1):
-    return ((array - np.min(array))/(np.max(array) - np.min(array)))*maxv
+# def scale(array, maxv=1):
+#     return ((array - K.min(array))/(K.max(array) - K.min(array)))*maxv
+def scale(array):
+    return (array-np.min(array))/4095
 
 def edge_detect(img):
     X_edges = []
@@ -27,21 +30,13 @@ def edge_detect(img):
 #CURRENTLY WINDOWING AND EDGE DETECTION TURNED OFF
 def preprocess_X(volume):
     #load as array
-    X = volume.get_fdata()
+    X = volume.get_data()
     X = scale(X)
-    #dealling with case 160
-    if not X.shape[1]==512 or not X.shape[2]==512:
-        X_placeholder = np.zeros((X.shape[0], 512, 512))
-        for i in range(X.shape[0]):            
-            X_placeholder[i,:,:] = cv2.resize(X[i,:,:], (512, 512))
-        X = np.expand_dims(X_placeholder, 3)
-        # window kidney
-        # X_window = np.clip(X, 0.39, 0.9)
-    else:
-        X = np.expand_dims(X, 3)
-        # window kidney
-        # X_window = np.clip(X, 0.39, 0.9)
-
+    # X = tf.cast(X, dtype=tf.float16)
+    X = np.expand_dims(X, 3)
+    if not X.shape[1] == 512 or not X.shape[2] == 512:
+        X = tf.image.resize(X, size=(512, 512))
+    
     # X_window = scale(X_window)
     # edge detection 
     # CURRENTLY TURNED OFF    
@@ -51,15 +46,13 @@ def preprocess_X(volume):
 
     # concat contrast with edges
     # X = np.concatenate((X_window, X_edges), axis=3).astype(np.float32)
-    return scale(X.astype(np.float32))
+    return X
 
 def preprocess_y(segmentation):
-    y = segmentation.get_fdata()
-    if not y.shape[1]==512 or not y.shape[2]==512:
-        y_placeholder = np.zeros((y.shape[0], 512, 512))
-        for i in range(y.shape[0]):            
-            y_placeholder[i,:,:] = cv2.resize(y[i,:,:], (512, 512))
-        y = y_placeholder
-    y = tf.keras.utils.to_categorical(y)[:,:,:,1:]
+    y = segmentation.get_data()
+    # y = tf.cast(y, dtype=tf.float16)
+    y = tf.keras.utils.to_categorical(y)
+    if not y.shape[1] == 512 or not y.shape[2] == 512:
+        y = tf.image.resize(y, size=(512, 512))
     
     return y

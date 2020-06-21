@@ -19,9 +19,10 @@ from modules.dataGenerators import trainGenerator, validationGenerator
 import keras.backend as K
 # K.set_floatx('float16')
 # K.set_epsilon(1e-4)
+
 # -------------CONFIG-----------------------------------------------------
-gpus = tf.config.experimental.list_physical_devices('GPU')
-tf.config.experimental.set_virtual_device_configuration(gpus[0], [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=6144)])
+# gpus = tf.config.experimental.list_physical_devices('GPU')
+# tf.config.experimental.set_virtual_device_configuration(gpus[0], [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=4000)])
 
 model = makeModel(512, 512, 1)
 # model = tf.keras.models.load_model(r'saved_models\checkpoints\model8\unet_without_edge_detection_with_batch_norm_1592615428', custom_objects={
@@ -31,7 +32,7 @@ model = makeModel(512, 512, 1)
 '------AMOUNT OF SLICES FOR TRAIN DATA == 38650'
 '------AMOUNT OF SLICES FOR VALID DATA == 4520'
 
-NAME = "unet_BN_with_CCC_100steps{}".format(int(time.time()))
+NAME = "unetwithoutBNscal2loss160epochs{}".format(int(time.time()))
 
 callbacks = [
     tf.keras.callbacks.TensorBoard(log_dir='logs/{}'.format(NAME)),
@@ -49,9 +50,9 @@ batch_size = 8
 data_size = 38650
 val_data_size = 4520
 results = model.fit(
-    trainGenerator(case_numbers_train, batch_size),
-    steps_per_epoch = 100, #data_size // batch_size,
-    epochs = 30,
+    trainGenerator([123], batch_size),
+    steps_per_epoch = 700//8,
+    epochs = 8,
     callbacks = callbacks,
     verbose = 1,
     validation_data = validationGenerator(case_numbers_val, batch_size),
