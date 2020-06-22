@@ -18,7 +18,7 @@ def visualize_case(case_num, save=None):
     volume, segmentation = load_case(case_num)
     X = preprocess_X(volume)
     y = segmentation.get_fdata()
-    model = tf.keras.models.load_model(r'saved_models\modelunetSGD1sliced2K1592791008_1592791684.1012115.h5', custom_objects={
+    model = tf.keras.models.load_model(r'saved_models\modelunetADAMdiceSLICED_1592793257_1592814183.2507899.h5', custom_objects={
         'dice_coef_loss': dice_coef_loss, 'dice_coef': dice_coef})
     
 
@@ -46,4 +46,4 @@ def visualize_case(case_num, save=None):
         nifty_img = nib.Nifti1Image(
             segmentation_pred, volume.affine, volume.header)
         nib.save(nifty_img, str(save) + "\case{}".format(case_num))
-visualize_case(123)
+visualize_case(148)

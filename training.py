@@ -54,7 +54,7 @@ data_size = 12009
 val_data_size = 3547
 num_epochs = 24
 results = model.fit(
-    trainGenerator([148], batch_size),
+    trainGenerator(case_numbers_train, batch_size),
     steps_per_epoch = data_size // batch_size,
     epochs = num_epochs,
     callbacks = callbacks,
