@@ -17,7 +17,7 @@ def cube_show_slider(cube, cube1=None, cube2=None, axis=2, **kwargs):
         raise ValueError("cube2 should be an ndarray with ndim == 3")
 
     # generate figure
-    fig, ax = plt.subplots(ncols=3)
+    fig, ax = plt.subplots(ncols=3, figsize=(16, 8))
     fig.subplots_adjust(left=0.25, bottom=0.25)
     # select first image
     s = [slice(0, 1) if i == axis else slice(None) for i in range(3)]
@@ -33,11 +33,8 @@ def cube_show_slider(cube, cube1=None, cube2=None, axis=2, **kwargs):
     # define slider
     axcolor = 'lightgoldenrodyellow'
     ax[0] = fig.add_axes([0.25, 0.1, 0.65, 0.03])
-    ax[1] = fig.add_axes([0.25, 0.1, 0.65, 0.03])
-    ax[2] = fig.add_axes([0.25, 0.1, 0.65, 0.03])
-    ax[0].set(title='raw image')
-    ax[1].set(title='ground truth segmentation')
-    ax[2].set(title='our model segmentation')
+    ax[1].set(title='Ground truth segmentation')
+    ax[2].set(title='Our segmentation')
     slider = Slider(ax[0], 'Axis %i index' % axis, 0, cube.shape[axis] - 1,
                     valinit=0, valfmt='%i')
 
