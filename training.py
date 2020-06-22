@@ -25,7 +25,7 @@ import tensorflow.keras.backend as K
 # tf.config.experimental.set_virtual_device_configuration(gpus[0], [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=4000)])
 
 
-model = makeModel(512, 512, 1, num_epochs)
+model = makeModel(512, 512, 1)
 # model = tf.keras.models.load_model(r'saved_models\modelunetwithoutBNscal2loss160epochs1592768773_1592770013.8964128.h5', custom_objects={
         # 'dice_coef_loss': dice_coef_loss, 'dice_coef': dice_coef})
 
@@ -52,10 +52,10 @@ case_numbers_train = case_numbers[:149]
 batch_size = 8
 data_size = 12009
 val_data_size = 3547
-num_epochs = 10
+num_epochs = 24
 results = model.fit(
     trainGenerator([148], batch_size),
-    steps_per_epoch = data_size // batch_size
+    steps_per_epoch = data_size // batch_size,
     epochs = num_epochs,
     callbacks = callbacks,
     verbose = 1,

@@ -22,7 +22,7 @@ def dice_coef_loss(y_true, y_pred):
 #   iou_score = tf.keras.backend.sum(tf.cast(intersection, tf.float32)) / tf.keras.backend.sum(tf.cast(union, tf.float32))
     
 
-def makeModel(IMG_HEIGHT, IMG_WIDTH, IMG_CHANNELS, NUM_EPOCHS):
+def makeModel(IMG_HEIGHT, IMG_WIDTH, IMG_CHANNELS):
     inputs = tf.keras.layers.Input((IMG_HEIGHT, IMG_WIDTH, IMG_CHANNELS))
 
     #Contraction path
