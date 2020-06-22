@@ -1,6 +1,7 @@
 from modules.preprocessing import preprocess_X, preprocess_y, scale
 from starter_code.utils import load_case
 import tensorflow as tf
+import time
 import numpy as np
 
 def trainGenerator(case_nums, batch_size):
@@ -15,12 +16,12 @@ def trainGenerator(case_nums, batch_size):
             y_file = y_file[begining_num:end_num+1, :, :]
             L = X_file.shape[0]
             batch_start = 0
-            batch_end = batch_size
+            batch_end = batch_size       
             while batch_start < L:
                 limit = min(batch_end, L)
                 X = X_file[batch_start:limit, :, :, :]
-                y = y_file[batch_start:limit, :, :, :]
-                yield (X, y, [None])            
+                y = y_file[batch_start:limit, :, :, :]                
+                yield (tf.cast(X, dtype=tf.float16), tf.cast(y, dtype=tf.float16), [None])            
                 batch_start += batch_size   
                 batch_end += batch_size
 
@@ -39,7 +40,7 @@ def validationGenerator(case_nums, batch_size):
             L = X_file.shape[0]
             batch_start = 0
             batch_end = batch_size
-            print('Validation in progress: {}%'.format(
+            print('Validation in progress: {:.2f}%'.format(
                 (  (case_num-np.min(case_nums))/(np.max(case_nums)-np.min(case_nums))  )*100
                 ))
             while batch_start < L:
@@ -48,7 +49,8 @@ def validationGenerator(case_nums, batch_size):
                 y = y_file[batch_start:limit, :, :, :]
 
                 #needs to yield (X, y, [None]) for some reason
-                yield (X, y, [None])            
+                
+                yield (tf.cast(X, dtype=tf.float16), tf.cast(y, dtype=tf.float16), [None])              
                 batch_start += batch_size   
                 batch_end += batch_size
 

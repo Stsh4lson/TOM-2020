@@ -42,7 +42,7 @@ def find_segmentation(y):
 #CURRENTLY WINDOWING AND EDGE DETECTION TURNED OFF
 def preprocess_X(volume):
     #load as array
-    X = volume.get_data()
+    X = volume.get_fdata()
     X = scale(X)
     # X = tf.cast(X, dtype=tf.float16)
     X = np.expand_dims(X, 3)
@@ -61,7 +61,7 @@ def preprocess_X(volume):
     return X
 
 def preprocess_y(segmentation):    
-    y = segmentation.get_data()
+    y = segmentation.get_fdata()
     begining, end = find_segmentation(y)
     # y = tf.cast(y, dtype=tf.float16)
     y = tf.keras.utils.to_categorical(y)

@@ -95,8 +95,7 @@ def makeModel(IMG_HEIGHT, IMG_WIDTH, IMG_CHANNELS, NUM_EPOCHS):
     
     outputs = tf.keras.layers.Conv2D(3, (1, 1), activation='softmax')(c9)
     model = tf.keras.Model(inputs=[inputs], outputs=[outputs])
-    
-    opt = tf.keras.optimizers.SGD(lr=1e-2, momentum=0.9, decay=1e-2/NUM_EPOCHS)
-    model.compile(optimizer=opt, loss = 'categorical_crossentropy', metrics=[dice_coef, 'accuracy'])
+        
+    model.compile(optimizer='adam', loss = dice_coef_loss, metrics=[dice_coef, 'accuracy'])
 
     return model
